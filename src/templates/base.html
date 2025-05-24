@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Flask Todo App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background: #f7f9fb;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #0078d7;
+            color: #fff;
+            padding: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        form[action="/add"] {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0 1rem 0;
+        }
+        form[action="/add"] input[type="text"] {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+            width: 250px;
+        }
+        form[action="/add"] button {
+            padding: 0.5rem 1.2rem;
+            border: none;
+            background: #0078d7;
+            color: #fff;
+            border-radius: 0 4px 4px 0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        form[action="/add"] button:hover {
+            background: #005fa3;
+        }
+        main {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 2rem;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            padding: 1rem 0.5rem;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li span {
+            font-size: 1.05rem;
+        }
+        a {
+            text-decoration: none;
+            margin-left: 1rem;
+            font-weight: 500;
+        }
+        a[style*="color: blue;"] { color: #0078d7 !important; }
+        a[style*="color: red;"] { color: #e81123 !important; }
+        form.edit-form input[type="text"] {
+            padding: 0.3rem 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        form.edit-form button {
+            padding: 0.3rem 0.9rem;
+            border: none;
+            background: #107c10;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        form.edit-form button:hover {
+            background: #0b5c0b;
+        }
+        footer {
+            text-align: center;
+            color: #888;
+            padding: 1.5rem 0 1rem 0;
+            font-size: 0.95rem;
+        }
+        @media (max-width: 700px) {
+            main {
+                padding: 1rem;
+            }
+            form[action="/add"] input[type="text"] {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Flask Todo App</h1>
+    </header>
+    <form action="/add" method="POST">
+        <input type="text" name="title" placeholder="Add a new todo">
+        <button type="submit">Add</button>
+    </form>
+    <main>
+        <ul>
+            {% for todo in todos %}
+                <li style="display: flex; align-items: center; justify-content: space-between;">
+                    {% if edit_id == todo.id %}
+                        <form class="edit-form" action="{{ url_for('edit_todo', todo_id=todo.id) }}" method="POST" style="display: flex; align-items: center; gap: 0.5rem; width: 100%;">
+                            <input type="text" name="title" value="{{ todo.title }}" required>
+                            <button type="submit">Save</button>
+                            <a href="{{ url_for('index') }}">Cancel</a>
+                        </form>
+                    {% else %}
+                        <span style="flex: 1;">
+                            {{ todo.id }} | {{ todo.title }} | 
+                            {% if todo.complete %}
+                                <span style="color: green;">Completed</span>
+                            {% else %}
+                                <span style="color: red;">Not Completed</span>
+                            {% endif %}
+                        </span>
+                        <span>
+                            <a href="/update/{{ todo.id }}" style="color: blue;">Toggle Status</a>
+                            <a href="/delete/{{ todo.id }}" style="color: red;">Delete</a>
+                            <a href="{{ url_for('edit_todo', todo_id=todo.id) }}?edit={{ todo.id }}" style="color: #9c27b0;">Edit</a>
+                        </span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+    <footer>
+        <p>&copy; 2025 Flask Todo App</p>
+    </footer>
+</body>
+</html>
